@@ -10,3 +10,5 @@ useful scripts for managing my kubernetes cluster. keyword my. pls dont run thes
 cert-manager can be used to get certificates from letsencrypt and hashicorp vault
 #### installation
 `kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.3.1/cert-manager.yaml` (from https://cert-manager.io/docs/installation/kubernetes/)
+#### create cloudflare token secret
+`CF_API_TOKEN=<MY_TOKEN> ./cert-manager/create-cloudflare-token-secret.sh`

@@ -3,7 +3,7 @@
 
 # exit if a command fails
 set -o errexit
-
+set -o pipefail
 # exit if required variables aren't set
 set -o nounset
 

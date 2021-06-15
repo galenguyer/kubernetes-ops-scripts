@@ -7,6 +7,12 @@ set -o pipefail
 # exit if required variables aren't set
 set -o nounset
 
-host=k8s-galenguyer-01.eastus.cloudapp.azure.com
-mkdir -p ~/.kube/
-ssh -t chef@k8s-01 sudo cat /root/.kube/config | sed -r -e "s/10.0.0.[0-9]{1,3}/$(dig +short $host)/g" > ~/.kube/config
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cloudflare-api-key-secret
+type: Opaque
+stringData:
+  api-key: $CF_API_TOKEN
+EOF
