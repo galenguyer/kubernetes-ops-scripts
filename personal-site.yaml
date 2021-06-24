@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: galenguyer-com
+spec:
+  selector:
+    app: galenguyer-com
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: galenguyer-com
+spec:
+  selector:
+    matchLabels:
+      app: galenguyer-com
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: galenguyer-com
+    spec:
+      containers:
+      - name: galenguyer-com
+        image: docker.io/galenguyer/galenguyer.com:latest
+        ports:
+        - containerPort: 80
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - galenguyer-com
+              topologyKey: "kubernetes.io/hostname"
+            weight: 100
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: galenguyer-com
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+spec:
+  rules:
+  - host: antifausa.net
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: galenguyer-com
+            port:
+              number: 80
+  tls:
+    - secretName: antifausa-net-tls
+      hosts:
+        - antifausa.net
