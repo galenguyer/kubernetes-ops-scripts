@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: antifausa-net
-        image: docker.io/galenguyer/galenguyer.com:latest
+        image: cr.galenguyer.com/galenguyer.com:latest
         ports:
         - containerPort: 80
       affinity:
@@ -47,6 +47,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: antifausa-net
+  annotations:
+    cert-manager.io/cluster-issuer: ca-issuer
 spec:
   rules:
   - host: antifausa.net
@@ -59,3 +61,7 @@ spec:
             name: antifausa-net
             port:
               number: 80
+  tls:
+  - hosts:
+    - antifausa.net
+    secretName: antifausa-net-cert
